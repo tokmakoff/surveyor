@@ -10,6 +10,18 @@
             android:title="@string/pref_title_rapidpro_host"
             android:summary="@string/pref_summary_rapidpro_host"/>
 
+        <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+        <CheckBoxPreference
+            android:key="pref_key_send_via_sms"
+            android:title="@string/pref_send_via_sms"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="pref_key_sms_number"
+            android:defaultValue="11 22 33 44 55"
+            android:title="@string/pref_sms_host"
+            android:summary="@string/pref_summary_sms_number"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

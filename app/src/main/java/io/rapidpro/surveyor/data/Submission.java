@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -485,6 +484,10 @@ public class Submission implements Jsonizable {
     }
 
     public void submit() throws IOException {
+
+
+        // Check that we don't need to send via SMS
+        boolean sendViaSMS = Surveyor.get().getPreferences().getBoolean("pref_key_send_via_sms", false);
         final TembaService rapid = Surveyor.get().getRapidProService();
         final Submission submission = this;
 
@@ -497,7 +500,13 @@ public class Submission implements Jsonizable {
 
         // then post the results
         submission.resolveMedia();
-        rapid.addResults(submission);
+
+        if(sendViaSMS) {
+            rapid.addResultsViaSMS(submission);
+        }
+        else {
+            rapid.addResults(submission);
+        }
     }
 
     public void delete() {

@@ -1,5 +1,8 @@
 package io.rapidpro.surveyor.net;
 
+import android.content.Intent;
+import android.net.Uri;
+
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -8,8 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -184,6 +185,82 @@ public class TembaService {
                 Response response = m_api.addResults(getToken(), result).execute();
                 if (response.isSuccessful()) {
                     success = response.isSuccessful();
+                } else {
+                    Surveyor.LOG.d("Response was not successful: " + response.toString());
+                }
+
+            }
+            if (success) {
+                submission.delete();
+            } else {
+                Surveyor.LOG.d("Error submitting results");
+                throw new TembaException("Error submitting results");
+            }
+        } catch (IOException e) {
+            throw new TembaException(e);
+        }
+    }
+
+
+    public void addResultsViaSMS(final Submission submission) {
+
+        ArrayList<String> enteredData = new ArrayList<String>();
+
+
+
+        Surveyor.LOG.d("addResultsViaSMS called with:" + submission.toString());
+        JsonElement result = submission.toJson();
+        Surveyor.LOG.d("result is:" + result.toString());
+        //JsonArray steps = result.getAsJsonArray("steps");
+        JsonObject o = result.getAsJsonObject();
+        Surveyor.LOG.d("o is:" + o.toString());
+        JsonArray steps = (JsonArray) o.get("steps");
+        Surveyor.LOG.d("steps is:" + steps.toString());
+
+        for(final JsonElement stepElement : steps) {
+            JsonObject step = stepElement.getAsJsonObject();
+            JsonElement ruleElement = step.get("rule");
+            if (!ruleElement.isJsonNull()) {
+                JsonObject rule = step.get("rule").getAsJsonObject();
+                JsonElement value = rule.get("value");
+
+                if (value.toString().indexOf(" ") == -1) {
+                    JsonElement category = rule.get("category");
+
+                    Surveyor.LOG.d("step[rule] is:" + rule.toString());
+                    Surveyor.LOG.d("step[rule].category is:" + category);
+                    Surveyor.LOG.d("step[rule].value is:" + value);
+
+                    enteredData.add(value.toString());
+                }
+            }
+        }
+
+//        Uri smsUri = Uri.parse("tel:123456");
+//        Intent intent = new Intent(Intent.ACTION_VIEW, smsUri);
+//        intent.putExtra("sms_body", "sms text");
+//        intent.setType("vnd.android-dir/mms-sms");
+//        Surveyor.get().startActivity(intent);
+
+        String smsText = "MCRAPE ";
+        for (String collectedText : enteredData ) {
+            smsText += collectedText + " ";
+        }
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.putExtra("sms_body", smsText);
+        intent.setData(Uri.parse("smsto:" + Uri.encode("+31 6 15218146")));
+        Surveyor.get().startActivity(intent);
+
+        submission.delete();
+
+        /*
+        try {
+
+            boolean success = false;
+            for (JsonObject result : submission.getResultsJson()) {
+                Response response = m_api.addResults(getToken(), result).execute();
+                if (response.isSuccessful()) {
+                    success = response.isSuccessful();
                 }
 
             }
@@ -195,7 +272,9 @@ public class TembaService {
         } catch (IOException e) {
             throw new TembaException(e);
         }
+        */
     }
+
 
     public void addCreatedFields(HashMap<String, Field> fields) {
         for (Field field : fields.values()) {
