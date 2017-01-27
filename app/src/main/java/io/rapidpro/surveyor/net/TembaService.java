@@ -1,7 +1,9 @@
 package io.rapidpro.surveyor.net;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.telephony.TelephonyManager;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -100,6 +102,10 @@ public class TembaService {
             Response<FlowDefinition> flowDefinitionResponse = m_api.getLegacyFlowDefinition(getToken(), flowUuid).execute();
             FlowDefinition def = flowDefinitionResponse.body();
             Definitions definitions = new Definitions();
+
+            if (def == null) {
+                  throw new IOException("Encountered empty flow definition");
+            }
             definitions.version = def.version;
             definitions.flows = new ArrayList<>();
             definitions.flows.add(def);
@@ -202,11 +208,38 @@ public class TembaService {
     }
 
 
+    private String getIndexOfLastValidInput(JsonArray steps) {
+        int lastErrorIndex = 0;
+        String lastValidInput = null;
+        int stepCount = 0;
+        for(final JsonElement stepElement : steps) {
+
+            JsonObject step = stepElement.getAsJsonObject();
+            JsonElement ruleElement = step.get("rule");
+            if (ruleElement.isJsonNull()) {
+
+                JsonArray actions = step.get("actions").getAsJsonArray();
+                JsonElement msg = actions.get(0).getAsJsonObject().get("msg");
+
+                if (msg.toString().contains("Error") || msg.toString().contains("Erro")) {
+                    Surveyor.LOG.d("Detected error at:" + stepCount);
+                    lastErrorIndex = stepCount;
+                }
+            } else {
+                JsonObject rule = step.get("rule").getAsJsonObject();
+                JsonElement value = rule.get("value");
+                if (stepCount == lastErrorIndex + 1) {
+                    lastValidInput = value.getAsString();
+                }
+            }
+            stepCount++;
+        }
+        return (lastValidInput);
+    }
+
     public void addResultsViaSMS(final Submission submission) {
 
         ArrayList<String> enteredData = new ArrayList<String>();
-
-
 
         Surveyor.LOG.d("addResultsViaSMS called with:" + submission.toString());
         JsonElement result = submission.toJson();
@@ -217,6 +250,9 @@ public class TembaService {
         JsonArray steps = (JsonArray) o.get("steps");
         Surveyor.LOG.d("steps is:" + steps.toString());
 
+        String lastValidInput = getIndexOfLastValidInput(steps);
+
+        /*
         for(final JsonElement stepElement : steps) {
             JsonObject step = stepElement.getAsJsonObject();
             JsonElement ruleElement = step.get("rule");
@@ -235,6 +271,7 @@ public class TembaService {
                 }
             }
         }
+        */
 
 //        Uri smsUri = Uri.parse("tel:123456");
 //        Intent intent = new Intent(Intent.ACTION_VIEW, smsUri);
@@ -242,13 +279,19 @@ public class TembaService {
 //        intent.setType("vnd.android-dir/mms-sms");
 //        Surveyor.get().startActivity(intent);
 
-        String smsText = "MCRAPE ";
+        String smsText = ""; // "MCRAPE ";
+        /*
         for (String collectedText : enteredData ) {
             smsText += collectedText + " ";
         }
+        */
+        smsText += lastValidInput;
+
+        String numberToSendSMSTo = getSMSFromPhoneNumber();
+
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.putExtra("sms_body", smsText);
-        intent.setData(Uri.parse("smsto:" + Uri.encode("+31 6 15218146")));
+        intent.setData(Uri.parse("smsto:" + Uri.encode(numberToSendSMSTo)));
         Surveyor.get().startActivity(intent);
 
         submission.delete();
@@ -273,6 +316,53 @@ public class TembaService {
             throw new TembaException(e);
         }
         */
+    }
+
+    static final String AU_OPTUS = "+61 435995771";
+    static final String MOZ_VOD = "+258 849587439";
+    static final String MOZ_MCEL = "+258 823196863";
+    static final String MOZ_MOV = "+258 875163545";
+
+
+    static final String MOZ_MCEL_OPERATOR = "64301";
+    static final String MOZ_MOV_OPERATOR = "64303";
+    static final String MOZ_VOD_OPERATOR = "64304";
+
+
+    static final String NL_KPN_OPERATOR = "20408";
+
+    static final String AU_OPTUS_OPERATOR1 = "50590";
+    static final String AU_OPTUS_OPERATOR2 = "50502";
+
+    private String getSMSFromPhoneNumber() {
+
+
+        TelephonyManager phoneManager = (TelephonyManager)
+                Surveyor.get().getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        String operator = null;
+        operator = phoneManager.getNetworkOperator();
+        Surveyor.LOG.d("operator = " + operator);
+
+        String phoneNumber = null;
+
+        Surveyor.LOG.d("operator is: " + operator);
+        // Parse the number and determine which of the three endpoints it should use
+        if (operator.equals(AU_OPTUS_OPERATOR1) || operator.equals(AU_OPTUS_OPERATOR2)) {
+            return(AU_OPTUS);
+        } else if (operator.equals(MOZ_VOD_OPERATOR)) {
+            // Vodacom
+            return(MOZ_VOD);
+        } else if (operator.equals(MOZ_MCEL_OPERATOR)) {
+            // mCel
+            return(MOZ_MCEL);
+        } else if (operator.equals(MOZ_MOV_OPERATOR)) {
+            // Movitel
+            return (MOZ_MOV);
+        } else if (operator.equals(NL_KPN_OPERATOR)) {
+            return ("Dutch endpoint");
+        } else
+            return("Error: no number mapping detected for your phone's operator (" + operator + ")");
     }
 
 

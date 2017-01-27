@@ -9,9 +9,9 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "io.rapidpro.surveyor"
+        applicationId "com.maraxis.rapidpro.surveyor"
         minSdkVersion 17
-        targetSdkVersion 23
+        targetSdkVersion 17
         versionCode 21
         versionName "1.3"
         multiDexEnabled = true

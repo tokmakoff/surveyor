@@ -19,10 +19,26 @@ class SubmitSubmissions extends AsyncTask<String, Void, Void> {
     private BlockingProgress m_progress;
     private int m_error;
 
+//    private static final int REQUEST_CODE_READ_PHONE_STATE = 0;
+
+
+
     public SubmitSubmissions(BaseActivity activity, File[] submissions, BlockingProgress progress) {
         m_activity = activity;
         m_submissions = submissions;
         m_progress = progress;
+
+//        // Assume thisActivity is the current activity
+//        int permissionCheck = ContextCompat.checkSelfPermission(Surveyor.get(),
+//                Manifest.permission.READ_SMS);
+//        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(activity,
+//                    new String[]{Manifest.permission.READ_PHONE_STATE},
+//                    REQUEST_CODE_READ_PHONE_STATE); // define this constant yourself
+//        } else {
+//            // you have the permission
+//            Surveyor.LOG.d("you have the permission");
+//        }
     }
 
     @Override
@@ -34,9 +50,8 @@ class SubmitSubmissions extends AsyncTask<String, Void, Void> {
                 try {
                     sub.submit();
                 } catch (Throwable t) {
-                    Surveyor.LOG.e("Failed to submit flow run", t);
                     m_error = m_activity.getRapidProService().getErrorMessage(t);
-                    Surveyor.LOG.e("m_error = " + m_error);
+                    Surveyor.LOG.e("Failed to submit flow run, error = " + m_error, t);
                 }
             }
 

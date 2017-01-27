@@ -495,7 +495,7 @@ public class Submission implements Jsonizable {
         rapid.addCreatedFields(m_fields);
 
         // first we need to create our contact
-        Surveyor.LOG.d(m_contact.toJson().toString());
+        Surveyor.LOG.d("Creating a new contact: " + m_contact.toJson().toString());
         rapid.addContact(m_contact);
 
         // then post the results
