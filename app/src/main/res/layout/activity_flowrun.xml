@@ -59,7 +59,7 @@
             android:paddingBottom="6dp">
 
 
-            <io.rapidpro.surveyor.ui.IconTextView
+            <com.maraxis.rapidpro.surveyor.ui.IconTextView
                 style="?android:textAppearanceSmall"
                 android:id="@+id/media_icon"
                 android:layout_width="wrap_content"
@@ -95,7 +95,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true">
 
-            <io.rapidpro.surveyor.ui.IconTextView
+            <com.maraxis.rapidpro.surveyor.ui.IconTextView
                 android:id="@+id/button_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin">
 
-                <io.rapidpro.surveyor.ui.IconTextView
+                <com.maraxis.rapidpro.surveyor.ui.IconTextView
                     android:id="@+id/download_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

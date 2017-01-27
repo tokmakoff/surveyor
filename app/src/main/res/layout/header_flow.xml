@@ -12,7 +12,7 @@
     android:background="@drawable/header">
 
 
-    <io.rapidpro.surveyor.ui.IconTextView
+    <com.maraxis.rapidpro.surveyor.ui.IconTextView
         android:id="@+id/download_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

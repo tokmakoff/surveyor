@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.rapidpro.surveyor.widget.ChatBubbleView
+<com.rapidpro.surveyor.widget.ChatBubbleView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/chat_bubble"
     android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:scaleType="centerCrop"
             />
         
-        <io.rapidpro.surveyor.ui.IconTextView
+        <com.maraxis.rapidpro.surveyor.ui.IconTextView
             android:id="@+id/media_icon"
             android:layout_alignBottom="@+id/thumbnail"
             android:layout_alignEnd="@id/thumbnail"
@@ -58,4 +58,4 @@
         android:layout_weight="@dimen/bubble_space" />
 
 
-</io.rapidpro.surveyor.widget.ChatBubbleView>
+</com.rapidpro.surveyor.widget.ChatBubbleView>

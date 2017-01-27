@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    tools:context=".activity.VideoCaptureActivity">
+    tools:context="com.rapidpro.surveyor.activity.VideoCaptureActivity">
 
     <LinearLayout
         android:id="@+id/camera_preview"
@@ -20,7 +20,7 @@
         android:padding="20dp"
         android:layout_alignEnd="@id/camera_preview" >
 
-        <io.rapidpro.surveyor.ui.IconTextView
+        <com.maraxis.rapidpro.surveyor.ui.IconTextView
             android:id="@+id/button_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:onClick="toggleCameras"
             android:text="@string/icon_camera_front" />
 
-        <io.rapidpro.surveyor.ui.IconTextView
+        <com.maraxis.rapidpro.surveyor.ui.IconTextView
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:id="@+id/button_capture"

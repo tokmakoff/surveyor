@@ -10,7 +10,7 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.CreateAccountActivity" />
+        tools:context="com.rapidpro.surveyor.activity.CreateAccountActivity" />
 
     <FrameLayout
         android:id="@+id/web_progress"

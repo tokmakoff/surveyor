@@ -31,7 +31,7 @@
         android:textColor="@color/light_gray"
         android:textSize="12sp"/>
 
-    <io.rapidpro.surveyor.ui.IconTextView
+    <com.maraxis.rapidpro.surveyor.ui.IconTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

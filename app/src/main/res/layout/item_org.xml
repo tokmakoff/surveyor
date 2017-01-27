@@ -7,7 +7,7 @@
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp">
 
-    <io.rapidpro.surveyor.ui.IconTextView
+    <com.maraxis.rapidpro.surveyor.ui.IconTextView
         android:id="@+id/org_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
